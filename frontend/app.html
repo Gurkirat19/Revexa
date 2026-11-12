@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revexa | Workspace</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+
+<body>
+
+<div class="app-page-loader" id="appPageLoader" aria-hidden="true"><div class="app-loader-card"><span class="app-loader-orb">✦</span><strong>Loading workspace</strong><small>Preparing your engineering overview</small><span class="app-loader-track"><i></i></span></div></div>
+<canvas class="revexa-ambient-canvas" id="workspaceMotion" aria-hidden="true"></canvas>
+<div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand brand-wordmark">
+            <div>
+                <strong>Revexa</strong>
+                <span>Every line deserves scrutiny.</span>
+            </div>
+        </div>
+
+        <nav class="nav">
+
+            <button class="nav-item active" data-page="dashboard">
+                <span>⌂</span>
+                Dashboard
+            </button>
+
+            <button class="nav-item" data-page="reviews">
+                <span>⌘</span>
+                PR Reviews
+            </button>
+
+            <button class="nav-item" data-page="repository">
+                <span>◈</span>
+                Repository
+            </button>
+
+            <button class="nav-item" data-page="sessions">
+                <span>◷</span>
+                Sessions
+            </button>
+
+            <button class="nav-item" data-page="activity">
+                <span>⌁</span>
+                Activity
+            </button>
+
+            <button class="nav-item" data-page="analytics">
+                <span>▥</span>
+                Analytics
+            </button>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <button class="nav-item" data-page="settings">
+                <span>⚙</span>
+                Settings
+            </button>
+
+            <div class="live-card">
+                <span class="live-indicator"></span>
+                <div>
+                    <strong>Agent Online</strong>
+                    <small>Ready for analysis</small>
+                </div>
+            </div>
+
+            <div class="version">
+                REVEXA CODE REVIEW
+                <span>v1.0.0</span>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div>
+                <span class="eyebrow">ENGINEERING ASSISTANT</span>
+                <h1 id="pageTitle">Dashboard</h1>
+            </div>
+
+            <div class="top-actions">
+                <div class="connection">
+                    <span class="live-indicator"></span>
+                    System operational
+                </div>
+
+                <button class="github-connect-button" id="githubConnectButton" type="button"><span class="github-mark">◉</span><span id="githubConnectLabel">Connect GitHub</span></button>
+                <div class="profile-menu" id="profileMenu" hidden>
+                    <span class="profile-avatar-fallback" id="profileAvatarFallback" hidden aria-hidden="true">R</span><img id="profileAvatar" alt="GitHub profile photo" referrerpolicy="no-referrer" decoding="async" />
+                    <span id="profileLogin"></span>
+                    <button id="githubLogoutButton" type="button">Logout</button>
+                </div>
+                <button class="icon-button" id="refreshButton" title="Refresh dashboard">↻</button>
+            </div>
+
+        </header>
+
+
+        <!-- DASHBOARD -->
+        <section class="page-section active-page" id="dashboardPage">
+
+            <div class="welcome">
+                <div>
+                    <span class="eyebrow">WELCOME BACK</span>
+                    <h2>Understand your code.<br><em>Build with confidence.</em></h2>
+                    <p>Analyze repositories, review pull requests, and let an AI agent investigate your codebase.</p>
+                </div>
+
+                <button class="primary-action" id="startAnalysisButton">
+                    Analyze Repository
+                    <span>→</span>
+                </button>
+            </div>
+
+
+            <div class="stats">
+
+                <div class="stat">
+                    <span>REPOSITORIES</span>
+                    <strong id="dashboardMetricRepos">0</strong>
+                    <small>Unique repositories</small>
+                </div>
+
+                <div class="stat">
+                    <span>PR REVIEWS</span>
+                    <strong id="dashboardMetricReviews">0</strong>
+                    <small>Completed locally</small>
+                </div>
+
+                <div class="stat">
+                    <span>ISSUES FOUND</span>
+                    <strong id="dashboardMetricFindings">0</strong>
+                    <small>Saved PR findings</small>
+                </div>
+
+                <div class="stat">
+                    <span>AI SESSIONS</span>
+                    <strong id="dashboardMetricSessions">0</strong>
+                    <small>Saved locally</small>
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-grid">
+
+                <div class="panel">
+
+                    <div class="panel-heading">
+                        <div>
+                            <span class="eyebrow">RECENT ACTIVITY</span>
+                            <h3>Latest sessions</h3>
+                        </div>
+                        <button class="panel-action" data-go-page="sessions" type="button">View all →</button>
+                    </div>
+
+                    <div class="session-list" id="dashboardRecentSessions"><div class="empty-state compact-empty"><h3>No recent activity</h3><p>Your completed repository analyses and PR reviews will show here.</p></div></div>
+
+                </div>
+
+
+                <div class="panel activity-summary">
+
+                    <div class="panel-heading">
+                        <div>
+                            <span class="eyebrow">AGENT</span>
+                            <h3>Current status</h3>
+                        </div>
+                    </div>
+
+                    <div class="agent-orb small">
+                        <span>✦</span>
+                    </div>
+
+                    <strong class="center-title">Ready to investigate</strong>
+                    <p class="center-copy">Start an analysis and watch the agent reason through your repository.</p>
+
+                    <div class="mini-progress">
+                        <span></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- REPOSITORY INPUT -->
+        <section class="page-section" id="repositoryPage">
+
+            <div class="section-intro">
+                <span class="eyebrow">REPOSITORY ASSISTANT</span>
+                <h2>Ask your codebase<br><em>anything.</em></h2>
+                <p>Give the agent a GitHub repository and a question. It will inspect the code and explain what it finds.</p>
+            </div>
+
+            <div class="input-panel">
+
+                <label>GITHUB REPOSITORY</label>
+
+                <div class="input-box">
+                    <span>◈</span>
+                    <input id="repoUrl" type="url" placeholder="https://github.com/owner/repository">
+                </div>
+
+                <div class="github-repositories-panel" id="githubRepositoriesPanel">
+                    <div class="github-repositories-heading"><strong>Your GitHub repositories</strong><button type="button" id="loadGithubReposButton">Load repositories</button></div>
+                    <p id="githubRepositoriesHint">Connect GitHub to browse your authorized repositories here.</p>
+                    <select id="githubRepositorySelect" aria-label="Choose a GitHub repository" hidden><option value="">Choose a repository</option></select>
+                </div>
+
+                <label>AI MODEL</label>
+
+                <select id="aiModel">
+                    <option value="gemini">Gemini</option>
+                    <option value="groq">Groq</option>
+                </select>
+
+                <label>YOUR QUESTION</label>
+
+                <textarea id="repositoryQuestion" placeholder="How does authentication work in this repository?"></textarea>
+
+                <button class="primary-action full" id="analyzeRepositoryButton">
+                    <span id="analyzeText">Start Analysis</span>
+                    <span id="analyzeLoader" class="loader hidden"></span>
+                    <span>→</span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- LIVE ANALYSIS -->
+        <section class="page-section" id="analysisPage">
+
+            <div class="analysis-header">
+
+                <div>
+                    <span class="eyebrow">LIVE SESSION</span>
+                    <h2>Analyzing your <em>code.</em></h2>
+                    <p id="analysisQuestion">Preparing repository analysis...</p>
+                </div>
+
+                <div class="session-badge">
+                    <span class="live-indicator"></span>
+                    <span id="analysisStatus">RUNNING</span>
+                </div>
+
+            </div>
+
+
+            <div class="analysis-layout">
+
+                <div class="code-preview panel">
+
+                    <div class="code-top">
+                        <span>REPOSITORY</span>
+                        <strong id="analysisRepo">—</strong>
+                    </div>
+
+                    <div class="fake-code">
+                        <span class="line"><i>01</i> <b>import</b> auth <b>from</b> "./services"</span>
+                        <span class="line"><i>02</i> </span>
+                        <span class="line"><i>03</i> <b>async function</b> authenticate(user) {</span>
+                        <span class="line"><i>04</i> &nbsp;&nbsp;<b>const</b> token = await auth.login(user)</span>
+                        <span class="line"><i>05</i> &nbsp;&nbsp;<b>return</b> validateToken(token)</span>
+                        <span class="line"><i>06</i> }</span>
+                        <span class="line"><i>07</i> </span>
+                        <span class="line"><i>08</i> <span class="comment">// repository context loaded by agent</span></span>
+                    </div>
+
+                </div>
+
+
+                <div class="analysis-card">
+
+                    <div class="agent-orb">
+                        <div class="orb-ring ring-one"></div>
+                        <div class="orb-ring ring-two"></div>
+                        <span>✦</span>
+                    </div>
+
+                    <h3>Analyzing Your Code</h3>
+
+                    <p class="analysis-copy">
+                        The AI agent is investigating your repository for structure, logic, security, and performance risks.
+                    </p>
+
+                    <div class="progress-wrap">
+                        <div class="progress-bar">
+                            <span id="progressBar"></span>
+                        </div>
+
+                        <div class="progress-meta">
+                            <span id="progressFile">Discovering repository</span>
+                            <strong id="progressPercent">0%</strong>
+                        </div>
+                    </div>
+
+
+                    <div class="analysis-steps" id="analysisSteps">
+
+                        <div class="analysis-step" data-step="0">
+                            <span class="step-icon">✓</span>
+                            <div>
+                                <strong>Scanning project structure & dependencies</strong>
+                                <small>Discovering source files</small>
+                            </div>
+                        </div>
+
+                        <div class="analysis-step" data-step="1">
+                            <span class="step-icon">✓</span>
+                            <div>
+                                <strong>Searching relevant code</strong>
+                                <small>Finding files related to your question</small>
+                            </div>
+                        </div>
+
+                        <div class="analysis-step" data-step="2">
+                            <span class="step-icon">✓</span>
+                            <div>
+                                <strong>Reading repository files</strong>
+                                <small>Building focused code context</small>
+                            </div>
+                        </div>
+
+                        <div class="analysis-step" data-step="3">
+                            <span class="step-icon">✓</span>
+                            <div>
+                                <strong>Detecting logic & runtime risks</strong>
+                                <small>Inspecting implementation behavior</small>
+                            </div>
+                        </div>
+
+                        <div class="analysis-step" data-step="4">
+                            <span class="step-icon">✓</span>
+                            <div>
+                                <strong>Reviewing security vulnerabilities</strong>
+                                <small>Checking suspicious patterns</small>
+                            </div>
+                        </div>
+
+                        <div class="analysis-step" data-step="5">
+                            <span class="step-icon">✓</span>
+                            <div>
+                                <strong>Generating engineering answer</strong>
+                                <small>Preparing evidence-based response</small>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RESULT -->
+        <section class="page-section" id="resultPage">
+
+            <div class="result-top">
+
+                <div>
+                    <span class="eyebrow">ANALYSIS COMPLETE</span>
+                    <h2>Repository <em>insights.</em></h2>
+                </div>
+
+                <button class="secondary-action" id="newAnalysisButton">
+                    New Analysis
+                </button>
+
+            </div>
+
+            <div class="result-question">
+                <span>QUESTION</span>
+                <p id="resultQuestion">—</p>
+            </div>
+
+            <div class="answer-panel panel">
+                <span class="eyebrow">AI ANSWER</span>
+                <div id="repositoryAnswer" class="answer"></div>
+            </div>
+
+        </section>
+
+
+        <!-- SIMPLE PLACEHOLDER PAGES -->
+        <section class="page-section utility-page" id="reviewsPage">
+            <div class="section-intro"><span class="eyebrow">PULL REQUESTS</span><h2>Review changes.<br><em>Catch issues early.</em></h2><p>Paste a GitHub pull request URL to inspect changed files, risk, and actionable findings.</p></div>
+            <div class="input-panel pr-review-panel">
+                <label for="prUrlInput">GITHUB PULL REQUEST URL</label>
+                <div class="input-box"><span>↗</span><input id="prUrlInput" type="url" placeholder="https://github.com/owner/repo/pull/123" autocomplete="url"></div>
+                <label for="prReviewModel">AI REVIEWER</label>
+                <select id="prReviewModel"><option value="gemini">Gemini</option><option value="groq">Groq</option><option value="compare">Compare Gemini + Groq</option></select>
+                <button class="primary-action full" id="runPrReviewButton" type="button"><span id="prReviewButtonText">Run PR review</span><span id="prReviewLoader" class="loader hidden"></span><span>→</span></button>
+                <p class="field-help">Choose Gemini, Groq, or compare both providers. Configure GEMINI_API_KEY and GROQ_API_KEY in backend/.env. Private repositories require a token with access.</p>
+            </div>
+            <div id="prReviewResult" class="pr-review-result" aria-live="polite"></div>
+        </section>
+
+        <section class="page-section utility-page" id="sessionsPage">
+            <div class="utility-heading"><div><span class="eyebrow">LOCAL HISTORY</span><h2>Sessions</h2><p>Your recent repository questions and PR reviews on this browser.</p></div><button class="secondary-action" id="clearHistoryButton" type="button">Clear history</button></div>
+            <div id="sessionsList" class="history-list"><div class="empty-state"><span>◷</span><h3>No sessions yet</h3><p>Run a repository analysis or PR review and it will appear here.</p><button class="secondary-action" data-go-page="repository" type="button">Start an analysis</button></div></div>
+        </section>
+
+        <section class="page-section utility-page" id="activityPage">
+            <div class="utility-heading"><div><span class="eyebrow">RECENT EVENTS</span><h2>Activity</h2><p>A local timeline of completed work in this browser.</p></div></div>
+            <div id="activityList" class="history-list"><div class="empty-state"><span>⌁</span><h3>Nothing to show yet</h3><p>Your completed analyses will be listed here.</p></div></div>
+        </section>
+
+        <section class="page-section utility-page" id="analyticsPage">
+            <div class="utility-heading"><div><span class="eyebrow">WORKSPACE OVERVIEW</span><h2>Analytics</h2><p>Lightweight metrics based on this browser's saved session history.</p></div></div>
+            <div class="stats analytics-stats"><div class="stat"><span>SESSIONS</span><strong id="metricSessions">0</strong><small>Saved locally</small></div><div class="stat"><span>REPOSITORIES</span><strong id="metricRepos">0</strong><small>Unique repositories</small></div><div class="stat"><span>PR REVIEWS</span><strong id="metricPrReviews">0</strong><small>Completed reviews</small></div><div class="stat"><span>FINDINGS</span><strong id="metricFindings">0</strong><small>Reported PR issues</small></div></div>
+            <div class="panel analytics-note"><h3>About these numbers</h3><p>Metrics are calculated from history stored in this browser only. They are not shared across devices and are not server-side analytics.</p></div>
+        </section>
+
+        <section class="page-section utility-page" id="settingsPage">
+            <div class="utility-heading"><div><span class="eyebrow">PREFERENCES</span><h2>Settings</h2><p>Manage workspace preferences and connection state.</p></div></div>
+            <div class="settings-grid">
+                <div class="panel setting-row"><div><h3>Default AI provider</h3><p>Choose the provider preselected for repository questions.</p></div><select id="defaultProviderSetting"><option value="gemini">Gemini</option><option value="groq">Groq</option></select></div>
+                <div class="panel setting-row"><div><h3>GitHub connection</h3><p id="settingsGithubStatus">Checking connection…</p></div><button class="secondary-action" id="settingsGithubButton" type="button">Connect GitHub</button></div>
+                <div class="panel setting-row"><div><h3>Local history</h3><p>Remove locally stored session details from this browser.</p></div><button class="secondary-action danger-action" id="settingsClearHistoryButton" type="button">Clear history</button></div>
+            </div>
+        </section>
+
+        <footer class="workspace-footer" role="contentinfo">
+            <a href="index.html" class="workspace-footer-brand">Revexa <span>Every line deserves scrutiny.</span></a>
+            <span class="workspace-footer-note">Review only code you are authorized to access.</span>
+            <span>© <span id="workspaceFooterYear"></span> Revexa</span>
+        </footer>
+    </main>
+</div>
+
+<script src="api-config.js"></script>
+<script src="app.js"></script>
+<script>
+  (function(){
+    const loader=document.getElementById('appPageLoader');
+    document.documentElement.classList.add('app-ready-pending');
+    window.addEventListener('load',()=>{window.setTimeout(()=>{loader?.classList.add('is-hidden');document.documentElement.classList.remove('app-ready-pending');},260);});
+    document.querySelectorAll('.nav-item[data-page]').forEach((item,index)=>{item.style.setProperty('--nav-index',index);});
+    const year=document.getElementById('workspaceFooterYear'); if(year) year.textContent=new Date().getFullYear();
+    const canvas=document.getElementById('workspaceMotion');
+    if(canvas && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){const ctx=canvas.getContext('2d');let w=0,h=0,points=[];let raf;function resize(){w=canvas.width=window.innerWidth*devicePixelRatio;h=canvas.height=window.innerHeight*devicePixelRatio;canvas.style.width='100%';canvas.style.height='100%';points=Array.from({length:38},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.22*devicePixelRatio,vy:(Math.random()-.5)*.22*devicePixelRatio}));}function draw(){ctx.clearRect(0,0,w,h);for(let i=0;i<points.length;i++){const a=points[i];a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>w)a.vx*=-1;if(a.y<0||a.y>h)a.vy*=-1;for(let j=i+1;j<points.length;j++){const b=points[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);if(d<145*devicePixelRatio){ctx.strokeStyle=`rgba(109,143,232,${(1-d/(145*devicePixelRatio))*.10})`;ctx.lineWidth=devicePixelRatio;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}}ctx.fillStyle='rgba(145,183,255,.28)';ctx.beginPath();ctx.arc(a.x,a.y,1.1*devicePixelRatio,0,Math.PI*2);ctx.fill();}raf=requestAnimationFrame(draw);}resize();draw();window.addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelAnimationFrame(raf);else draw();});}
+  })();
+</script>
+</body>
+</html>
