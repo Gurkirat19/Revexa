@@ -1,3 +1,4 @@
+ HEAD
 # Revexa — PR Review & Code Intelligence
 
 Revexa — Every line deserves scrutiny.
@@ -148,3 +149,6 @@ Before a public production launch, configure HTTPS and secure cookies, use a Git
 - For local development, use the same host consistently (`127.0.0.1` rather than mixing it with `localhost`) for `FRONTEND_URL`, browser navigation, and OAuth callback configuration. Cookies are host-scoped.
 
 The callback now redirects to the workspace with a readable status message instead of leaving a raw JSON error page. OAuth authorization codes are single-use; never share callback URLs because they can contain temporary authorization codes.
+
+# Revexa
+ origin/main
