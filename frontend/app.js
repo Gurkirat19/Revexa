@@ -485,6 +485,12 @@ function showPage(page) {
 
         "Dashboard";
 
+    // Automatically fetch repositories when the Repository page is opened.
+    // The manual button remains available as a retry.
+    if (page === "repository") {
+        loadGithubRepositories();
+    }
+
 
 
 }
@@ -2910,29 +2916,73 @@ if (githubLogoutButton) {
     });
 }
 
-if (loadGithubReposButton) {
-    loadGithubReposButton.addEventListener("click", async () => {
+let githubRepositoriesLoaded = false;
+let githubRepositoriesRequest = null;
+
+async function loadGithubRepositories(force = false) {
+    if (!githubRepositoriesHint || !githubRepositorySelect) return;
+    if (githubRepositoriesRequest) return githubRepositoriesRequest;
+    if (githubRepositoriesLoaded && !force) return;
+
+    if (loadGithubReposButton) {
         loadGithubReposButton.disabled = true;
         loadGithubReposButton.textContent = "Loading…";
+    }
+    githubRepositoriesHint.classList.remove("is-error");
+    githubRepositoriesHint.textContent = "Loading your GitHub repositories…";
+
+    githubRepositoriesRequest = (async () => {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/auth/github/repos`, { credentials: "include" });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.detail || "Could not load repositories");
+            const response = await fetch(
+                `${API_BASE_URL}/api/auth/github/repos`,
+                { method: "GET", credentials: "include", headers: { "Accept": "application/json" } }
+            );
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                const message = data.detail || (response.status === 401
+                    ? "Your Revexa session has expired. Sign in again."
+                    : response.status === 403 || response.status === 400
+                        ? "Connect GitHub to this Revexa account before loading repositories."
+                        : `Could not load repositories (HTTP ${response.status}).`);
+                throw new Error(message);
+            }
+
+            const repositories = Array.isArray(data.repositories) ? data.repositories : [];
             githubRepositorySelect.innerHTML = '<option value="">Choose a repository</option>';
-            data.repositories.forEach((repo) => {
+            repositories.forEach((repo) => {
                 const option = document.createElement("option");
-                option.value = repo.url;
-                option.textContent = `${repo.name}${repo.private ? " · private" : ""}`;
+                option.value = repo.url || repo.html_url || "";
+                option.textContent = `${repo.name || repo.full_name || "Unnamed repository"}${repo.private ? " · private" : ""}`;
+                option.disabled = !option.value;
                 githubRepositorySelect.appendChild(option);
             });
+
             githubRepositorySelect.hidden = false;
-            githubRepositoriesHint.textContent = `${data.repositories.length} repositories available.`;
+            githubRepositoriesLoaded = true;
+            githubRepositoriesHint.classList.remove("is-error");
+            githubRepositoriesHint.textContent = repositories.length
+                ? `${repositories.length} repositories available. Select one to use it for analysis.`
+                : "GitHub connected, but no repositories were returned for this account.";
         } catch (error) {
-            githubRepositoriesHint.textContent = error.message;
+            githubRepositoriesHint.textContent = error.message || "Could not load repositories. Please try again.";
+            githubRepositoriesHint.classList.add("is-error");
+            githubRepositoriesHint.setAttribute("role", "alert");
+            throw error;
         } finally {
-            loadGithubReposButton.disabled = false;
-            loadGithubReposButton.textContent = "Load repositories";
+            if (loadGithubReposButton) {
+                loadGithubReposButton.disabled = false;
+                loadGithubReposButton.textContent = "Load repositories";
+            }
+            githubRepositoriesRequest = null;
         }
+    })();
+
+    return githubRepositoriesRequest;
+}
+
+if (loadGithubReposButton) {
+    loadGithubReposButton.addEventListener("click", () => {
+        loadGithubRepositories(true).catch(() => {});
     });
 }
 
