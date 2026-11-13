@@ -443,7 +443,10 @@ def google_callback(request: Request, code: str = "", state: str = "", error: st
             user_id = user["id"]
             db.execute("UPDATE users SET name=?,email=?,avatar_url=?,updated_at=? WHERE id=?",
                        (claims.get("name") or email.split("@")[0], email, claims.get("picture"), now, user_id))
-    response = RedirectResponse(f"{FRONTEND_URL}/?auth=connected", status_code=303)
+    response = RedirectResponse(
+    f"{FRONTEND_URL}/app.html?auth=connected",
+    status_code=303
+)
     _create_session(response, user_id)
     response.delete_cookie("ci_google_state", path="/")
     return response
